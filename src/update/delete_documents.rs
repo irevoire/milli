@@ -137,10 +137,11 @@ impl<'t, 'u, 'i> DeleteDocuments<'t, 'u, 'i> {
             // It's faster to acquire a cursor to get and delete or put, as we avoid traversing
             // the LMDB B-Tree two times but only once.
             let mut iter = word_docids.prefix_iter_mut(self.wtxn, &word)?;
-            if let Some((key, mut docids)) = iter.next().transpose()? {
+            if let Some((key, docids)) = iter.next().transpose()? {
                 if key == word.as_ref() {
                     let previous_len = docids.len();
-                    docids.difference_with(&self.documents_ids);
+                    let mut docids = docids.to_owned();
+                    docids -= &self.documents_ids;
                     if docids.is_empty() {
                         iter.del_current()?;
                         *must_remove = true;
@@ -178,9 +179,10 @@ impl<'t, 'u, 'i> DeleteDocuments<'t, 'u, 'i> {
         // to compute the cartesian product of every words of the deleted documents.
         let mut iter = word_pair_proximity_docids.remap_key_type::<ByteSlice>().iter_mut(self.wtxn)?;
         while let Some(result) = iter.next() {
-            let (bytes, mut docids) = result?;
+            let (bytes, docids) = result?;
             let previous_len = docids.len();
-            docids.difference_with(&self.documents_ids);
+            let mut docids = docids.to_owned();
+            docids -= &self.documents_ids;
             if docids.is_empty() {
                 iter.del_current()?;
             } else if docids.len() != previous_len {
@@ -233,9 +235,10 @@ impl<'t, 'u, 'i> DeleteDocuments<'t, 'u, 'i> {
         // We delete the documents ids that are under the facet field id values.
         let mut iter = facet_field_id_value_docids.iter_mut(self.wtxn)?;
         while let Some(result) = iter.next() {
-            let (bytes, mut docids) = result?;
+            let (bytes, docids) = result?;
             let previous_len = docids.len();
-            docids.difference_with(&self.documents_ids);
+            let mut docids = docids.to_owned();
+            docids -= &self.documents_ids;
             if docids.is_empty() {
                 iter.del_current()?;
             } else if docids.len() != previous_len {

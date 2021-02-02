@@ -120,7 +120,7 @@ fn mdfs_step(
                     for (w1, w2) in pairs.iter().cloned() {
                         let key = (w1, w2, proximity);
                         if let Some(di) = index.word_pair_proximity_docids.get(rtxn, &key)? {
-                            docids.union_with(&di);
+                            docids |= &di;
                         }
                     }
                 }

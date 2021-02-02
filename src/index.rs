@@ -9,12 +9,9 @@ use roaring::RoaringBitmap;
 
 use crate::facet::FacetType;
 use crate::fields_ids_map::FieldsIdsMap;
-use crate::{default_criteria, Criterion, Search, FacetDistribution};
 use crate::{BEU32, DocumentId, FieldId, ExternalDocumentsIds};
-use crate::{
-    RoaringBitmapCodec, BEU32StrCodec, StrStrU8Codec, ObkvCodec,
-    BoRoaringBitmapCodec, CboRoaringBitmapCodec,
-};
+use crate::{default_criteria, Criterion, Search, FacetDistribution};
+use crate::{RoaringBitmapCodec, RoaringBitmapRefCodec, BEU32StrCodec, StrStrU8Codec, ObkvCodec};
 
 pub const CRITERIA_KEY: &str = "criteria";
 pub const DISPLAYED_FIELDS_KEY: &str = "displayed-fields";
@@ -35,13 +32,13 @@ pub struct Index {
     /// Contains many different types (e.g. the fields ids map).
     pub main: PolyDatabase,
     /// A word and all the documents ids containing the word.
-    pub word_docids: Database<Str, RoaringBitmapCodec>,
+    pub word_docids: Database<Str, RoaringBitmapRefCodec>,
     /// Maps a word and a document id (u32) to all the positions where the given word appears.
-    pub docid_word_positions: Database<BEU32StrCodec, BoRoaringBitmapCodec>,
+    pub docid_word_positions: Database<BEU32StrCodec, RoaringBitmapRefCodec>,
     /// Maps the proximity between a pair of words with all the docids where this relation appears.
-    pub word_pair_proximity_docids: Database<StrStrU8Codec, CboRoaringBitmapCodec>,
+    pub word_pair_proximity_docids: Database<StrStrU8Codec, RoaringBitmapRefCodec>,
     /// Maps the facet field id and the globally ordered value with the docids that corresponds to it.
-    pub facet_field_id_value_docids: Database<ByteSlice, CboRoaringBitmapCodec>,
+    pub facet_field_id_value_docids: Database<ByteSlice, RoaringBitmapRefCodec>,
     /// Maps the document id, the facet field id and the globally ordered value.
     pub field_id_docid_facet_values: Database<ByteSlice, Unit>,
     /// Maps the document id to the document as an obkv store.
