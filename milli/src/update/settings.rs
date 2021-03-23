@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::str::FromStr;
 
 use anyhow::Context;
@@ -32,6 +32,7 @@ pub struct Settings<'a, 't, 'u, 'i> {
     displayed_fields: Option<Option<Vec<String>>>,
     faceted_fields: Option<Option<HashMap<String, String>>>,
     criteria: Option<Option<Vec<String>>>,
+    stop_words: Option<Option<HashSet<String>>>,
 }
 
 impl<'a, 't, 'u, 'i> Settings<'a, 't, 'u, 'i> {
@@ -55,6 +56,7 @@ impl<'a, 't, 'u, 'i> Settings<'a, 't, 'u, 'i> {
             displayed_fields: None,
             faceted_fields: None,
             criteria: None,
+            stop_words: None,
             update_id,
         }
     }
@@ -89,6 +91,14 @@ impl<'a, 't, 'u, 'i> Settings<'a, 't, 'u, 'i> {
 
     pub fn set_criteria(&mut self, criteria: Vec<String>) {
         self.criteria = Some(Some(criteria));
+    }
+
+    pub fn reset_stop_words(&mut self) {
+        self.stop_words = Some(None);
+    }
+
+    pub fn set_stop_words(&mut self, stop_words: HashSet<String>) {
+        self.stop_words = Some(Some(stop_words));
     }
 
     fn reindex<F>(&mut self, cb: &F, old_fields_ids_map: FieldsIdsMap) -> anyhow::Result<()>
@@ -241,6 +251,15 @@ impl<'a, 't, 'u, 'i> Settings<'a, 't, 'u, 'i> {
                 self.index.put_criteria(self.wtxn, &new_criteria)?;
             }
             Some(None) => { self.index.delete_criteria(self.wtxn)?; }
+            None => (),
+        }
+        Ok(())
+    }
+
+    fn update_stop_words(&mut self) -> anyhow::Result<()> {
+        match self.stop_words {
+            Some(Some(ref fields)) => self.index.put_stop_words(&mut self.wtxn, fields)?,
+            Some(None) => { self.index.delete_stop_words(self.wtxn)?; },
             None => (),
         }
         Ok(())

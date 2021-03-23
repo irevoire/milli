@@ -1,4 +1,4 @@
-use std::borrow::Cow;
+use std::{borrow::Cow, collections::HashSet};
 use std::collections::HashMap;
 use std::path::Path;
 
@@ -17,6 +17,7 @@ use crate::{
     StrStrU8Codec, ObkvCodec, BoRoaringBitmapCodec, CboRoaringBitmapCodec,
 };
 
+pub const STOP_WORDS_KEY: &str = "stop_words";
 pub const CRITERIA_KEY: &str = "criteria";
 pub const DISPLAYED_FIELDS_KEY: &str = "displayed-fields";
 pub const DOCUMENTS_IDS_KEY: &str = "documents-ids";
@@ -340,6 +341,23 @@ impl Index {
         match self.main.get::<_, Str, SerdeJson<Vec<Criterion>>>(rtxn, CRITERIA_KEY)? {
             Some(criteria) => Ok(criteria),
             None => Ok(default_criteria()),
+        }
+    }
+
+    /* stop_words */
+
+    pub fn put_stop_words(&self, wtxn: &mut RwTxn, stop_words: &HashSet<String>) -> heed::Result<()> {
+        self.main.put::<_, Str, SerdeJson<_>>(wtxn, STOP_WORDS_KEY, stop_words)
+    }
+
+    pub fn delete_stop_words(&self, wtxn: &mut RwTxn) -> heed::Result<bool> {
+        self.main.delete::<_, Str>(wtxn, STOP_WORDS_KEY)
+    }
+
+    pub fn stop_words(&self, rtxn: &RoTxn) -> heed::Result<HashSet<String>> {
+        match self.main.get::<_, Str, SerdeJson<HashSet<String>>>(rtxn, STOP_WORDS_KEY)? {
+            Some(stop_words) => Ok(stop_words),
+            None => Ok(HashSet::new()),
         }
     }
 

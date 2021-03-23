@@ -266,6 +266,13 @@ struct Settings {
         skip_serializing_if = "Option::is_none",
     )]
     criteria: Option<Option<Vec<String>>>,
+
+    #[serde(
+        default,
+        deserialize_with = "deserialize_some",
+        skip_serializing_if = "Option::is_none",
+    )]
+    stop_words: Option<Option<Vec<String>>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -438,6 +445,15 @@ async fn main() -> anyhow::Result<()> {
                             None => builder.reset_criteria(),
                         }
                     }
+
+                    // We transpose the settings JSON struct into a real setting update.
+                    if let Some(stop_words) = settings.stop_words {
+                        match stop_words {
+                            Some(stop_words) => builder.set_criteria(stop_words),
+                            None => builder.reset_criteria(),
+                        }
+                    }
+
 
                     let result = builder.execute(|indexing_step, update_id| {
                         let (current, total) = match indexing_step {
