@@ -11,7 +11,7 @@ milli = { path = "../milli" }
 jemallocator = "0.3.2"
 
 [dev-dependencies]
-heed = "*" # we want to use the version milli uses
+heed = { git = "https://github.com/irevoire/heed", branch = "main", default-features = false, features = ["lmdb", "sync-read-txn"] }
 criterion = { version = "0.3.4", features = ["html_reports"] }
 
 [build-dependencies]
