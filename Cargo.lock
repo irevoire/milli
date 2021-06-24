@@ -131,7 +131,7 @@ dependencies = [
  "convert_case",
  "criterion",
  "flate2",
- "heed",
+ "heed 0.10.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "jemallocator",
  "milli",
  "reqwest",
@@ -864,12 +864,29 @@ dependencies = [
 [[package]]
 name = "heed"
 version = "0.10.6"
+dependencies = [
+ "bstr",
+ "byteorder",
+ "heed-traits 0.7.0",
+ "heed-types 0.7.2",
+ "libc",
+ "lmdb-rkv-sys",
+ "once_cell",
+ "page_size",
+ "synchronoise",
+ "url",
+ "zerocopy",
+]
+
+[[package]]
+name = "heed"
+version = "0.10.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "afcc6c911acaadad3ebe9f1ef1707d80bd71c92037566f47b6238a03b60adf1a"
 dependencies = [
  "byteorder",
- "heed-traits",
- "heed-types",
+ "heed-traits 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "heed-types 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "libc",
  "lmdb-rkv-sys",
  "once_cell",
@@ -883,8 +900,23 @@ dependencies = [
 [[package]]
 name = "heed-traits"
 version = "0.7.0"
+
+[[package]]
+name = "heed-traits"
+version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b328f6260a7e51bdb0ca6b68e6ea27ee3d11fba5dee930896ee7ff6ad5fc072c"
+
+[[package]]
+name = "heed-types"
+version = "0.7.2"
+dependencies = [
+ "bincode",
+ "heed-traits 0.7.0",
+ "serde",
+ "serde_json",
+ "zerocopy",
+]
 
 [[package]]
 name = "heed-types"
@@ -893,7 +925,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e628efb08beaee58355f80dc4adba79d644940ea9eef60175ea17dc218aab405"
 dependencies = [
  "bincode",
- "heed-traits",
+ "heed-traits 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde",
  "serde_json",
  "zerocopy",
@@ -905,7 +937,7 @@ version = "0.6.0"
 dependencies = [
  "anyhow",
  "byte-unit",
- "heed",
+ "heed 0.10.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "jemallocator",
  "milli",
  "stderrlog",
@@ -969,7 +1001,7 @@ dependencies = [
  "funty",
  "futures",
  "grenad",
- "heed",
+ "heed 0.10.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "jemallocator",
  "log",
  "maplit",
@@ -1103,7 +1135,7 @@ dependencies = [
  "anyhow",
  "byte-unit",
  "csv",
- "heed",
+ "heed 0.10.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "jemallocator",
  "milli",
  "roaring",
@@ -1389,7 +1421,7 @@ dependencies = [
  "fst",
  "fxhash",
  "grenad",
- "heed",
+ "heed 0.10.6",
  "human_format",
  "itertools 0.10.0",
  "levenshtein_automata",
@@ -2236,7 +2268,7 @@ version = "0.6.0"
 dependencies = [
  "anyhow",
  "byte-unit",
- "heed",
+ "heed 0.10.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "jemallocator",
  "log",
  "milli",

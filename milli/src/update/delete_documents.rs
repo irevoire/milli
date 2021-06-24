@@ -197,6 +197,7 @@ impl<'t, 'u, 'i> DeleteDocuments<'t, 'u, 'i> {
                         iter.del_current()?;
                         *must_remove = true;
                     } else if docids.len() != previous_len {
+                        dbg!(key);
                         iter.put_current(key, &docids)?;
                     }
                 }
